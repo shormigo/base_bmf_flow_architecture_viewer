@@ -67,7 +67,7 @@ python -m src /path/to/object --variant both --labels
 python -m src /path/to/object --variant both --scheme dark --png --labels
 
 # Use this one-liner to generate every variant (overview + detailed) in both color schemes (default + dark) with high-res PNGs:
-for scheme in default dark; do python -m src /Users/shormigo/Documents/BASE/Viatris/veeva_objects/medicinal_product__rim_gxpd_all --out /Users/shormigo/Documents/BASE/Viatris/veeva_objects/medicinal_product__rim_gxpd_all/output.mmd --variant both --png --png-scale 3 --scheme "$scheme" --labels --direction TD; done
+for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/output.mmd --variant both --png --png-scale 3 --scheme "$scheme" --labels --direction TD; done
 ```
 
 ## 📖 Detailed Usage
