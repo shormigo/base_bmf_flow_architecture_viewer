@@ -49,6 +49,11 @@ class MermaidGenerator:
         class_defs, class_assignments = self._render_styles(graph, visible_tasks)
         lines.extend(class_defs)
         lines.extend(class_assignments)
+        
+        # Add arrow styling for dark mode
+        if self.color_scheme == "dark":
+            # Style all arrows (edges) to be white for dark mode
+            lines.append("linkStyle default stroke:#FFFFFF,stroke-width:2px;")
 
         return "\n".join(lines) + "\n"
 
