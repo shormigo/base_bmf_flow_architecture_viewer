@@ -1,0 +1,198 @@
+# Task Type Definitions for BMF Flow Visualizer
+# This file defines all supported Prefect task types and their characteristics
+
+task_definitions:
+  
+  # ========================================================================
+  # Input/Output Tasks
+  # ========================================================================
+  
+  ReadExcel:
+    display_name: "Read Excel"
+    icon: "📄"
+    color: "#E3F2FD"  # Light Blue
+    shape: "circle"
+    category: "input"
+    parameters:
+      - input_table
+      - output_table
+      - sheet_name
+      - dtype
+    description: "Read data from Excel file"
+  
+  ExportObjects:
+    display_name: "Export Objects"
+    icon: "📋"
+    color: "#FFF3E0"  # Light Orange
+    shape: "circle"
+    category: "input"
+    parameters:
+      - object_list
+      - output_table
+    description: "Export object data from Veeva Vault"
+  
+  CreateObjects:
+    display_name: "Create Objects"
+    icon: "✅"
+    color: "#C8E6C9"  # Light Green
+    shape: "rounded"
+    category: "output"
+    parameters:
+      - input_table
+      - migration_mode
+    description: "Create objects in Veeva Vault"
+  
+  GenerateReport:
+    display_name: "Generate Report"
+    icon: "📊"
+    color: "#F3E5F5"  # Light Purple
+    shape: "rounded"
+    category: "output"
+    parameters:
+      - subheader
+      - custom_stylesheet
+    description: "Generate migration report"
+  
+  QueryVault:
+    display_name: "Query Vault"
+    icon: "🔍"
+    color: "#FFF3E0"  # Light Orange
+    shape: "circle"
+    category: "input"
+    parameters:
+      - query
+      - output_table
+    description: "Query data from Veeva Vault using VQL"
+  
+  # ========================================================================
+  # Data Processing Tasks
+  # ========================================================================
+  
+  Filter:
+    display_name: "Filter"
+    icon: "🔽"
+    color: "#C8E6C9"  # Light Green
+    shape: "rect"
+    category: "processing"
+    parameters:
+      - input_table
+      - criteria_descriptions_file
+      - output_table
+      - discarded_records_table
+    description: "Filter records based on criteria"
+  
+  MergeTables:
+    display_name: "Merge Tables"
+    icon: "🔗"
+    color: "#FFE0B2"  # Light Orange
+    shape: "subroutine"
+    category: "processing"
+    parameters:
+      - merging_rules
+      - output_table
+      - drop_duplicates
+    description: "Merge multiple tables"
+  
+  Mapping:
+    display_name: "Mapping"
+    icon: "🗺️"
+    color: "#B3E5FC"  # Light Cyan
+    shape: "hexagon"
+    category: "processing"
+    parameters:
+      - input_table
+      - rules
+      - output_table
+      - parallel
+    description: "Map fields to target schema"
+  
+  AggregateV2:
+    display_name: "Aggregate"
+    icon: "📈"
+    color: "#FFCCBC"  # Light Deep Orange
+    shape: "subroutine"
+    category: "processing"
+    parameters:
+      - input_table
+      - columns_to_groupby
+      - output_table
+      - how
+    description: "Aggregate records by grouping"
+  
+  Concat:
+    display_name: "Concatenate"
+    icon: "➕"
+    color: "#D1C4E9"  # Light Indigo
+    shape: "subroutine"
+    category: "processing"
+    parameters:
+      - input_paths
+      - output_table
+      - unmatched_cols_mode
+    description: "Concatenate multiple tables"
+  
+  Explode:
+    display_name: "Explode"
+    icon: "💥"
+    color: "#FFCCBC"  # Light Deep Orange
+    shape: "rect"
+    category: "processing"
+    parameters:
+      - input_table
+      - output_table
+      - delimiter
+      - columns_to_explode
+    description: "Explode delimited column values into rows"
+  
+  SetEnvironmentVariables:
+    display_name: "Set Environment"
+    icon: "⚙️"
+    color: "#E0E0E0"  # Light Gray
+    shape: "rect"
+    category: "utility"
+    parameters:
+      - variables
+    description: "Set environment variables for downstream tasks"
+
+
+# ========================================================================
+# Color Schemes
+# ========================================================================
+
+color_schemes:
+  default:
+    input: "#E3F2FD"        # Light Blue
+    output: "#C8E6C9"       # Light Green
+    processing: "#FFF9C4"   # Light Yellow
+    utility: "#F5F5F5"      # Light Gray
+    merge: "#FFE0B2"        # Light Orange
+    aggregate: "#FFCCBC"    # Light Deep Orange
+    filter: "#C8E6C9"       # Light Green
+    concat: "#D1C4E9"       # Light Indigo
+    error: "#FFCDD2"        # Light Red
+    
+  dark:
+    input: "#1565C0"        # Dark Blue
+    output: "#2E7D32"       # Dark Green
+    processing: "#F57F17"   # Dark Yellow
+    utility: "#424242"      # Dark Gray
+    merge: "#E65100"        # Dark Orange
+    aggregate: "#BF360C"    # Dark Deep Orange
+    filter: "#2E7D32"       # Dark Green
+    concat: "#283593"       # Dark Indigo
+    error: "#C62828"        # Dark Red
+
+
+# ========================================================================
+# Default Styling
+# ========================================================================
+
+default_styling:
+  node_shape: "rect"                    # or "circle", "diamond", "hexagon"
+  edge_type: "arrow"                    # or "line", "dashed"
+  font_size: 12
+  diagram_direction: "TD"               # TD (top-down), LR (left-right)
+  show_parameters: true
+  show_line_numbers: false
+  wrap_text: true
+  text_wrap_width: 30
