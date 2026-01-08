@@ -1,46 +1,69 @@
 # BMF Flow Visualizer
 
-Automatically generate beautiful Mermaid diagrams and PNG visualizations from BMF (Prefect-based) flow Python code and YAML configurations.
+Automatically generate Mermaid diagrams and PNG visualizations from BMF flow Python code and YAML configurations.
 
-## ✨ Features
+## Features
 
-- 🎯 **Automatic Flow Analysis** - AST-based Python parser extracts explicit and implicit dependencies
-- 🔗 **Implicit Dependency Detection** - Automatically discovers task relationships from constructor parameters (input_table, input_paths)
-- 📄 **YAML Integration** - Parse and enrich with filters, merges, and mappings with heuristic metadata matching
-- 📊 **Beautiful Diagrams** - Styled Mermaid diagrams with icons, colors, and shapes
-- 🎨 **Multiple Variants** - Generate overview (executive) and detailed (technical) versions
+- **Automatic Flow Analysis** - AST-based Python parser extracts explicit and implicit dependencies
+- **Implicit Dependency Detection** - Automatically discovers task relationships from constructor parameters (input_table, input_paths)
+- **YAML Integration** - Parse and enrich with filters, merges, and mappings with heuristic metadata matching
+- **Beautiful Diagrams** - Styled Mermaid diagrams with icons, colors, and shapes
+- **Multiple Variants** - Generate overview (executive) and detailed (technical) versions
   - **Overview**: Hides utility tasks, clean minimal labels
   - **Detailed**: Shows all tasks with operational metadata (merge rules, filter types, aggregation details)
-- 🌓 **Color Schemes** - Switch between default (bright) and dark themes
-- 🖼️ **High-Resolution PNG** - Auto-render diagrams with configurable scale (default 3x) and dimensions
-- 🏷️ **Smart Edge Labels** - Task types on edges, detailed metadata for filters/merges/mappings
-- 🔍 **Graph Validation** - Detect cycles, isolated tasks, and disconnected components
-- 📅 **Timestamped Output** - Filenames include timestamp for version tracking
-- 🧪 **Well-Tested** - 95/95 tests passing (100% coverage)
+- **Color Schemes** - Switch between default (bright) and dark themes
+- **High-Resolution PNG** - Auto-render diagrams with configurable scale (default 3x) and dimensions
+- **Smart Edge Labels** - Task types on edges, detailed metadata for filters/merges/mappings
+- **Graph Validation** - Detect cycles, isolated tasks, and disconnected components
+- **Timestamped Output** - Filenames include timestamp for version tracking
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
 ```bash
+# Install Node.js locally (user space)
+curl -LO https://nodejs.org/dist/v18.20.4/node-v18.20.4-linux-x64.tar.xz
+tar -xf node-v18.20.4-linux-x64.tar.xz
+
+# Add it to your PATH
+echo 'export PATH=$HOME/node-v18.20.4-linux-x64/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify
+node -v
+npm -v
+
+# Install Mermaid CLI for PNG rendering
+npm install --prefix ~/.local @mermaid-js/mermaid-cli
+
+# Add the local bin directory to PATH:
+echo 'export PATH=$HOME/.local/node_modules/.bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify
+mmdc --version
+
+# Make Puppeteer args persistent (recommended): 
+# this disables dependencies on Chromium, which can cuse potential issues
+echo 'export PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox"' >> ~/.bashrc
+source ~/.bashrc
+
 # Clone the repository
 cd bmf_flow_visualizer
 
 # Install dependencies
 pip install -r requirements.txt
-
-# (Optional) Install Mermaid CLI for PNG rendering
-npm install -g @mermaid-js/mermaid-cli
 ```
 
 ### Basic Usage
 
 ```bash
 # Generate Mermaid diagram
-python -m src /path/to/medicinal_product__rim_gxpd_all
+python -m src /path/to/object
 
 # Or use the convenience script
-./scripts/visualize_flow.sh /path/to/medicinal_product__rim_gxpd_all
+./scripts/visualize_flow.sh /path/to/object
 ```
 
 This creates `flow.mmd` in the current directory.
@@ -67,10 +90,10 @@ python -m src /path/to/object --variant both --labels
 python -m src /path/to/object --variant both --scheme dark --png --labels
 
 # Use this one-liner to generate every variant (overview + detailed) in both color schemes (default + dark) with high-res PNGs:
-for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/output.mmd --variant both --png --png-scale 3 --scheme "$scheme" --labels --direction TD; done
+for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/output.mmd --variant both --png --png-scale 6 --scheme "$scheme" --labels --direction TD; done
 ```
-
-## 📖 Detailed Usage
+ 
+## Detailed Usage
 
 ### CLI Reference
 
@@ -93,7 +116,7 @@ python -m src OBJECT_PATH [OPTIONS]
 
 **Detailed Mode** (default):
 - Shows all tasks including SetEnvironmentVariables and utility tasks
-- Full task type labels (e.g., "📄 Read Excel")
+- Full task type labels (e.g., "Read Excel")
 - Rich operational metadata:
   - Merge tasks: "2 merge rules<br/>Tables: filtered_gxpd_export, parsed_gxpd_sec_table"
   - Filter tasks: "Filter: comparison, is_null<br/>5 rules"
@@ -103,7 +126,7 @@ python -m src OBJECT_PATH [OPTIONS]
 
 **Overview Mode**:
 - Hides utility tasks (SetEnvironmentVariables) with automatic bypass routing
-- Clean, minimal labels (e.g., "📄 GxPD Export")
+- Clean, minimal labels (e.g., "GxPD Export")
 - Icon and task name only
 - Ideal for executive presentations and high-level architecture
 
@@ -111,7 +134,6 @@ python -m src OBJECT_PATH [OPTIONS]
 - Generates both variants with timestamped filenames:
   - `{object_name}_flow_architecture_{scheme}_detailed_{MMDDYYYYHHMMSS}.mmd`
   - `{object_name}_flow_architecture_{scheme}_overview_{MMDDYYYYHHMMSS}.mmd`
-- Perfect for comprehensive documentation
 
 ### Color Schemes
 
@@ -120,71 +142,24 @@ python -m src OBJECT_PATH [OPTIONS]
 - Filters: Light orange
 - Transformations: Light green
 - Mappings: Light yellow
-- Great for light-themed presentations
 
 **Dark Scheme** (saturated colors):
 - Input/Output: Deep blue
 - Filters: Deep orange
 - Transformations: Deep green
 - Mappings: Deep yellow
-- Great for dark-themed presentations
 
 ### Edge Labels
 
 Edges display the source task's type as the label (e.g., "Filter", "Merge", "Mapping"). Enhanced with YAML metadata when available:
-- **Filters:** Shows filter types from YAML ("comparison", "is_null", "is_unique")
+- **Filters:** Shows filter types from YAML (e.g. "comparison", "is_null", "is_unique")
 - **Merges:** Shows merge rule count and tables merged ("2 merge rules")
 - **Mappings:** Shows mapping count from YAML ("32 mappings")
 - **Other tasks:** Task type name from task_definitions.yaml
 
 In detailed mode, node labels include comprehensive operational details extracted from YAML configurations.
 
-## 🏗️ Architecture
-
-**Phase 1: Foundation** ✅
-- Task models with metadata support
-- Graph structures with validation
-- Configuration system
-
-**Phase 2: Python Parser** ✅
-- AST-based Prefect flow parser
-- Task extraction with parameters
-- Explicit dependency analysis (set_upstream/set_downstream)
-- **Implicit dependency extraction** from constructor parameters
-
-**Phase 3: YAML Parser** ✅
-- Filter criteria parsing
-- Merge rule parsing
-- Mapping rule parsing
-- Metadata enrichment
-
-**Phase 4: Graph Construction** ✅
-- GraphBuilder with FileLocator integration
-- DependencyResolver for execution order
-- GraphValidator with weak connectivity detection
-- Multi-root flow support
-- **Heuristic YAML metadata matching** for enrichment
-
-**Phase 5: Mermaid Generation** ✅
-- MermaidGenerator with styled output
-- Config-driven shapes, colors, and icons
-- Edge label derivation
-- Multi-variant support
-
-**Phase 6: CLI & Rendering** ✅
-- Click-based CLI
-- PNG rendering via mmdc
-- Convenience wrapper scripts
-
-**Phase 7: Production Enhancements** ✅
-- Implicit dependency detection from input_table/input_paths
-- Utility task hiding with bypass routing
-- Detailed mode metadata (merge rules, filter types, aggregations)
-- High-resolution PNG with configurable scale
-- Timestamped filename format
-- YAML metadata heuristic matching
-
-## 🎨 Configuration
+## Configuration
 
 Task styling is controlled via [config/task_definitions.yaml](config/task_definitions.yaml):
 
@@ -230,7 +205,7 @@ color_schemes:
     # ... 9 categories total
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -255,53 +230,7 @@ python -m pytest tests/unit/test_mermaid_generator.py -v
 
 **Total:** 95/95 tests passing (100% success rate)
 
-## 📝 Examples
-
-### Example 1: Basic Diagram
-
-```bash
-python -m src /path/to/medicinal_product__rim_gxpd_all
-```
-
-Generates a styled Mermaid diagram with default colors.
-
-### Example 2: High-Resolution PNG
-
-```bash
-python -m src /path/to/object --png --png-scale 5.0
-```
-
-Generates extra high-resolution PNG at 5x scale for large displays.
-
-### Example 3: Executive Overview
-
-```bash
-python -m src /path/to/object --variant overview --scheme dark --png --png-scale 3
-```
-
-Creates a clean, dark-themed, high-resolution PNG perfect for executive presentations.
-
-### Example 4: Technical Documentation
-
-```bash
-python -m src /path/to/object --variant detailed --labels --png --png-scale 3
-```
-
-Generates a detailed diagram with edge labels, full operational metadata, and high-resolution PNG.
-
-### Example 5: Complete Package
-
-```bash
-python -m src /path/to/object --variant both --scheme default --labels --png --png-scale 3
-```
-
-Creates 4 files with timestamped names:
-- `{object}_flow_architecture_default_detailed_{timestamp}.mmd` - Full technical Mermaid
-- `{object}_flow_architecture_default_detailed_{timestamp}.png` - High-res rendered PNG
-- `{object}_flow_architecture_default_overview_{timestamp}.mmd` - Clean executive Mermaid
-- `{object}_flow_architecture_default_overview_{timestamp}.png` - High-res rendered PNG
-
-## 🔍 Validation Features
+## Validation Features
 
 The tool automatically validates your flow and provides warnings for:
 
@@ -322,7 +251,7 @@ WARNING: Isolated tasks found: mapped, created_objects, generated_report
 ERROR: Cycle detected in graph: task_a -> task_b -> task_c -> task_a
 ```
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 bmf_flow_visualizer/
@@ -365,14 +294,13 @@ bmf_flow_visualizer/
 
 Make sure Mermaid CLI is installed:
 ```bash
-npm install -g @mermaid-js/mermaid-cli
 mmdc --version
 ```
 
 ### Invalid path error
 
 Ensure the path points to a BMF object directory containing:
-- `flows/` folder with `creation_flow.py` or `deletion_flow.py`
+- `flows/` folder with `creation_flow.py`
 - Optional: `filter/`, `mapping/`, `merging_rules/` folders with YAML files
 
 ### No edges in diagram
@@ -388,12 +316,12 @@ task_b.depends_on(task_a)
 
 Verify `config/task_definitions.yaml` contains color_schemes and your tasks have a category assigned.
 
-## 🚦 Current Status
+## Current Status
 
 **Version:** 1.0.0  
-**Status:** Production Ready ✅  
+**Status:** MVP Ready
 **Tests:** 95/95 passing (100%)  
-**Last Updated:** January 7, 2026
+**Last Updated:** January 8, 2026
 
 All phases complete:
 - ✅ Phase 1: Foundation & Setup
@@ -414,9 +342,9 @@ This is an internal BASE project. For questions or contributions, contact Sebast
 
 ## 📄 License
 
-Internal Project - BASE
+Internal Project - BASE Life Science
 
 ---
 
-**Created:** January 7, 2026  
+**Created:** January, 2026  
 **Maintainer:** Sebastian Hormigo [sebastian.hormigo@groupinfosys.com].
