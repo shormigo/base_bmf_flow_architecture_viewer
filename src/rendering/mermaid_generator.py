@@ -203,19 +203,15 @@ class MermaidGenerator:
 
     def _node_shape_syntax(self, node_id: str, label: str, shape: str, png_safe: bool = False) -> str:
         # Map semantic shape to Mermaid syntax
+        # For maximum compatibility with mermaid-cli and online editors, use simple syntax
+        # that doesn't conflict with HTML/special character parsing
         if png_safe:
             # Force simple rectangle for maximum compatibility with mmdc
             return f"{node_id}[\"{label}\"]"
-        if shape == "circle":
-            return f"{node_id}(((\"{label}\")))"
-        if shape == "rounded":
-            return f"{node_id}(\"{label}\")"
-        if shape == "subroutine":
-            return f"{node_id}([[\"{label}\"]])"
-        if shape == "hexagon":
-            return f"{node_id}({{\"{label}\"}})"
-        # default rect
-        return f"{node_id}[\"{label}\"]"
+        
+        # Use simple rounded rectangle for most shapes to avoid parser conflicts
+        # This is compatible with both mmdc and web-based Mermaid renderers
+        return f"{node_id}(\"{label}\")"
 
     def _get_visible_tasks(self, graph: FlowGraph) -> List[str]:
         """Filter out utility tasks if hide_utility_tasks is enabled."""
