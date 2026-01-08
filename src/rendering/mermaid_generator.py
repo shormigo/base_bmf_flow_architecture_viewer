@@ -96,11 +96,12 @@ class MermaidGenerator:
             src = graph.tasks.get(edge.source_id)
             if src:
                 if use_task_type_labels:
-                    # Use display name of task type as edge label
+                    # Show simple task type display name
                     task_def = self.config.get_task_def(src.task_type) or {}
                     label = task_def.get("display_name", src.task_type)
                 else:
-                    label = self._derive_edge_label(src)
+                    # No labels at all
+                    label = ""
         if label:
             return f"{edge.source_id} -->|{label}| {edge.target_id}"
         return f"{edge.source_id} --> {edge.target_id}"

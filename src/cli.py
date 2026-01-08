@@ -80,8 +80,8 @@ def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: fl
     if variant in ("overview", "both"):
         variants_to_gen.append(("overview", False))
 
-    # Generate timestamp for filenames
-    timestamp = datetime.now().strftime("%m%d%Y%H%M%S")
+    # Generate timestamp for filenames: MMDDYYYY_HHMMSS
+    timestamp = datetime.now().strftime("%m%d%Y_%H%M%S")
 
     for var_name, show_params in variants_to_gen:
         # Detailed mode: show utility tasks and enhanced details

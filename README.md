@@ -90,7 +90,7 @@ python -m src /path/to/object --variant both --edge-labels
 python -m src /path/to/object --variant both --scheme dark --png --edge-labels
 
 # Use this one-liner to generate every variant (overview + detailed) in both color schemes (default + dark) with high-res PNGs:
-for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/output.mmd --variant both --png --png-scale 6 --scheme "$scheme" --edge-labels --direction TD; done
+for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/ --variant both --png --png-scale 6 --scheme "$scheme" --edge-labels --direction TD; done
 ```
  
 ## Detailed Usage
@@ -132,8 +132,8 @@ python -m src OBJECT_PATH [OPTIONS]
 
 **Both Mode**:
 - Generates both variants with timestamped filenames:
-  - `{object_name}_{MMDDYYYYHHMMSS}_flow_architecture_{scheme}_detailed.mmd`
-  - `{object_name}_{MMDDYYYYHHMMSS}_flow_architecture_{scheme}_overview.mmd`
+  - `{object_name}_{MMDDYYYY_HHMMSS}_flow_architecture_{scheme}_detailed.mmd`
+  - `{object_name}_{MMDDYYYY_HHMMSS}_flow_architecture_{scheme}_overview.mmd`
 
 ### Color Schemes
 
