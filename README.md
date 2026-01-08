@@ -59,6 +59,9 @@ pip install -r requirements.txt
 ### Basic Usage
 
 ```bash
+# Show all available options
+python -m src --help
+
 # Generate Mermaid diagram
 python -m src /path/to/object
 
@@ -72,7 +75,13 @@ This creates `flow.mmd` in the current directory.
 
 ```bash
 # Generate PNG output
-python -m src /path/to/object --png
+python -m src /path/to/object --render-png
+
+# Generate SVG output
+python -m src /path/to/object --render-svg
+
+# Generate both PNG and SVG
+python -m src /path/to/object --render-both
 
 # Specify output file
 python -m src /path/to/object --out /tmp/my_flow.mmd
@@ -80,17 +89,23 @@ python -m src /path/to/object --out /tmp/my_flow.mmd
 # Add edge labels
 python -m src /path/to/object --edge-labels
 
-# Choose color scheme
-python -m src /path/to/object --scheme dark
+# Use dark color scheme
+python -m src /path/to/object --scheme-dark
+
+# Generate both color schemes
+python -m src /path/to/object --scheme-both
+
+# Generate overview version
+python -m src /path/to/object --variant-overview --edge-labels
 
 # Generate both overview and detailed versions
-python -m src /path/to/object --variant both --edge-labels
+python -m src /path/to/object --variant-both --edge-labels
 
 # Combine all options
-python -m src /path/to/object --variant both --scheme dark --png --edge-labels
+python -m src /path/to/object --variant-both --scheme-both --render-both --edge-labels
 
-# Use this one-liner to generate every variant (overview + detailed) in both color schemes (default + dark) with high-res PNGs:
-for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/ --variant both --png --png-scale 6 --scheme "$scheme" --edge-labels --direction TD; done
+# Use this one-liner to generate every variant (overview + detailed) in both color schemes (default + dark) with high-res PNGs and SVGs:
+python -m src /path/to/object --out /path/to/folder/ --variant-both --render-both --render-scale 6 --scheme-both --edge-labels --direction TD
 ```
  
 ## Detailed Usage
@@ -106,11 +121,23 @@ python -m src OBJECT_PATH [OPTIONS]
 
 **Options:**
 - `--out PATH` - Output file path (default: flow.mmd)
-- `--variant CHOICE` - Diagram variant: detailed, overview, or both (default: detailed)
-- `--png` - Generate PNG output via mmdc
+- `--variant-detailed` - Generate detailed diagram with operational metadata (default)
+- `--variant-overview` - Generate overview diagram (clean, minimal)
+- `--variant-both` - Generate both detailed and overview diagrams
+- `--render-png` - Render PNG output via mmdc
+- `--render-svg` - Render SVG output via mmdc
+- `--render-both` - Render both PNG and SVG outputs
+- `--render-scale FLOAT` - PNG scale factor for mmdc (default: 2.0, ignored by SVG)
+- `--png-width INT` - PNG/SVG width in pixels (overrides scale for PNG)
+- `--png-height INT` - PNG/SVG height in pixels (overrides scale for PNG)
+- `--png-bg COLOR` - PNG/SVG background color (e.g. #ffffff, transparent)
 - `--edge-labels / --no-edge-labels` - Show/hide edge labels (default: --edge-labels)
-- `--scheme CHOICE` - Color scheme: default or dark (default: default)
+- `--scheme-default` - Use default (bright) color scheme (default)
+- `--scheme-dark` - Use dark (saturated) color scheme
+- `--scheme-both` - Generate diagrams with both color schemes
 - `--direction CHOICE` - Graph direction: TD, LR, or BT (default: TD)
+- `--hide-utility / --show-utility` - Hide/show utility tasks (default: --hide-utility)
+- `--help` - Show help message with all available options
 
 ### Variant Modes
 
@@ -134,6 +161,24 @@ python -m src OBJECT_PATH [OPTIONS]
 - Generates both variants with timestamped filenames:
   - `{object_name}_{MMDDYYYY_HHMMSS}_flow_architecture_{scheme}_detailed.mmd`
   - `{object_name}_{MMDDYYYY_HHMMSS}_flow_architecture_{scheme}_overview.mmd`
+- When combined with `--scheme-both`, generates all 4 combinations (2 variants × 2 schemes)
+
+### Output Formats
+
+**Mermaid (.mmd)**:
+- Text-based diagram definition
+- Can be edited manually
+- Rendered by GitHub, VS Code extensions, and mermaid.live
+
+**PNG (.png)**:
+- High-resolution raster images
+- Configurable scale, width, height, and background
+- Ideal for presentations and documentation
+
+**SVG (.svg)**:
+- Scalable vector graphics
+- Crisp at any zoom level
+- Ideal for web publishing and print
 
 ### Color Schemes
 
@@ -142,12 +187,18 @@ python -m src OBJECT_PATH [OPTIONS]
 - Filters: Light orange
 - Transformations: Light green
 - Mappings: Light yellow
+- Use with `--scheme-default` (enabled by default)
 
 **Dark Scheme** (saturated colors):
 - Input/Output: Deep blue
 - Filters: Deep orange
 - Transformations: Deep green
 - Mappings: Deep yellow
+- Use with `--scheme-dark`
+
+**Both Schemes**:
+- Use `--scheme-both` to generate diagrams with both color schemes
+- Creates separate files for each scheme with `_default_` and `_dark_` in filenames
 
 ### Edge Labels
 
