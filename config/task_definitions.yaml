@@ -42,6 +42,28 @@ task_definitions:
       - migration_mode
     description: "Create objects in Veeva Vault"
   
+  UpdateObjects:
+    display_name: "Update Objects"
+    icon: "✏️"
+    color: "#C8E6C9"  # Light Green
+    shape: "rounded"
+    category: "output"
+    parameters:
+      - input_table
+      - migration_mode
+    description: "Update objects in Veeva Vault"
+  
+  CreateDocumentRoots:
+    display_name: "Create Document Roots"
+    icon: "📁"
+    color: "#C8E6C9"  # Light Green
+    shape: "rounded"
+    category: "output"
+    parameters:
+      - input_table
+      - migration_mode
+    description: "Create document root objects in Veeva Vault"
+  
   GenerateReport:
     display_name: "Generate Report"
     icon: "📊"

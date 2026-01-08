@@ -274,11 +274,12 @@ class ASTPythonParser:
     
     def _extract_dependencies(self, tree: ast.AST, tasks: List[Task]) -> List[Edge]:
         """
-        Extract task dependencies from set_upstream and set_downstream calls.
+        Extract task dependencies from set_upstream, set_downstream, and set_dependencies calls.
         
         Looks for patterns like:
             task_a.set_upstream(task=[task_b, task_c])
             task_a.set_downstream(task=task_b)
+            task_a.set_dependencies(upstream_tasks=[task_b, task_c])
         
         Args:
             tree: AST tree
@@ -296,7 +297,7 @@ class ASTPythonParser:
                 if isinstance(node.value, ast.Call):
                     call = node.value
                     
-                    # Check for .set_upstream or .set_downstream
+                    # Check for .set_upstream or .set_downstream or .set_dependencies
                     if isinstance(call.func, ast.Attribute):
                         method_name = call.func.attr
                         
@@ -335,6 +336,24 @@ class ASTPythonParser:
                                     if edge not in edges:
                                         edges.append(edge)
                                     self.logger.debug(f"Found dependency: {source_id} -> {downstream_id}")
+                        
+                        elif method_name == "set_dependencies":
+                            # obj.set_dependencies(upstream_tasks=[...])
+                            target_id = self._get_call_object(call.func)
+                            
+                            # Extract upstream tasks from 'upstream_tasks' parameter
+                            upstream_ids = self._extract_task_list_from_call(call, param_name="upstream_tasks")
+                            
+                            for upstream_id in upstream_ids:
+                                if upstream_id in task_ids and target_id in task_ids:
+                                    edge = Edge(
+                                        source_id=upstream_id,
+                                        target_id=target_id,
+                                        edge_type="dependency"
+                                    )
+                                    if edge not in edges:
+                                        edges.append(edge)
+                                    self.logger.debug(f"Found dependency via set_dependencies: {upstream_id} -> {target_id}")
         
         return edges
     
@@ -345,19 +364,31 @@ class ASTPythonParser:
         
         return None
     
-    def _extract_task_list_from_call(self, call_node: ast.Call) -> List[str]:
+    def _extract_task_list_from_call(self, call_node: ast.Call, param_name: Optional[str] = None) -> List[str]:
         """
-        Extract task IDs from set_upstream/set_downstream arguments.
+        Extract task IDs from method call arguments.
         
         Handles:
         - task=[task_a, task_b]
         - task=task_a
         - task_list=[...]
+        - upstream_tasks=[task_a, task_b]
+        
+        Args:
+            call_node: AST Call node
+            param_name: Specific parameter name to look for (e.g., "upstream_tasks")
+                       If None, looks for "task" or "task_list"
+        
+        Returns:
+            List of task IDs found
         """
         task_ids = []
         
+        # Determine which parameter names to check
+        param_names = [param_name] if param_name else ("task", "task_list")
+        
         for keyword in call_node.keywords:
-            if keyword.arg in ("task", "task_list"):
+            if keyword.arg in param_names:
                 # Handle list of tasks
                 if isinstance(keyword.value, ast.List):
                     for elt in keyword.value.elts:
