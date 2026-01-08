@@ -41,7 +41,7 @@ class MermaidGenerator:
         # Edges (with utility task bypass)
         edges_to_render = self._get_visible_edges(graph, visible_tasks)
         for edge in edges_to_render:
-            lines.append(self._render_edge(edge, graph, use_task_type_labels=True))
+            lines.append(self._render_edge(edge, graph, use_task_type_labels=label_edges))
 
         # Styling via classDef/class based on task categories/colors
         # Keep styles for both .mmd and PNG so themes are consistent

@@ -57,11 +57,11 @@ def _render_png_from_code(code: str, png_path: Path, scale: Optional[float] = No
 @click.option("--png-width", type=int, default=None, help="PNG width in pixels (overrides scale if set)")
 @click.option("--png-height", type=int, default=None, help="PNG height in pixels (overrides scale if set)")
 @click.option("--png-bg", type=str, default=None, help="PNG background color (e.g. #ffffff, transparent). Defaults based on scheme.")
-@click.option("--labels/--no-labels", default=True, help="Include edge labels when possible")
+@click.option("--edge-labels/--no-edge-labels", "edge_labels", default=True, help="Show labels on edges (arrows) indicating task types")
 @click.option("--scheme", type=click.Choice(["default", "dark"], case_sensitive=False), default="default", help="Color scheme to use")
 @click.option("--direction", type=click.Choice(["TD", "LR", "BT"], case_sensitive=False), default=None)
 @click.option("--hide-utility/--show-utility", default=True, help="Hide utility tasks like SetEnvironmentVariables for cleaner diagrams")
-def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: float, png_width: Optional[int], png_height: Optional[int], png_bg: Optional[str], labels: bool, scheme: str, direction: Optional[str], hide_utility: bool):
+def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: float, png_width: Optional[int], png_height: Optional[int], png_bg: Optional[str], edge_labels: bool, scheme: str, direction: Optional[str], hide_utility: bool):
     """Build the flow graph and generate a Mermaid diagram from OBJECT_PATH."""
     builder = GraphBuilder(object_path)
     result = builder.build()
@@ -88,7 +88,7 @@ def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: fl
         # Overview mode: hide utility tasks for cleaner view
         hide_util = not show_params  # detailed=False hides, detailed=True shows
         gen = MermaidGenerator(direction=direction, color_scheme=scheme, hide_utility_tasks=hide_util)
-        code = gen.generate(result.graph, title=f"{obj_name} ({var_name})", label_edges=labels, show_params=show_params)
+        code = gen.generate(result.graph, title=f"{obj_name} ({var_name})", label_edges=edge_labels, show_params=show_params)
 
         # Generate filename: {object_name}_flow_architecture_{scheme}_{variant}_{timestamp}
         filename = f"{obj_name}_flow_architecture_{scheme}_{var_name}_{timestamp}.mmd"
@@ -102,7 +102,7 @@ def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: fl
             code_png = gen.generate(
                 result.graph,
                 title=f"{obj_name} ({var_name})",
-                label_edges=labels,
+                label_edges=edge_labels,
                 show_params=show_params,
                 png_safe=False,
             )
@@ -118,7 +118,7 @@ def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: fl
                 code_png_safe = gen.generate(
                     result.graph,
                     title=f"{obj_name} ({var_name})",
-                    label_edges=labels,
+                    label_edges=edge_labels,
                     show_params=show_params,
                     png_safe=True,
                 )
