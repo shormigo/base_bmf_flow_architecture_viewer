@@ -78,19 +78,19 @@ python -m src /path/to/object --png
 python -m src /path/to/object --out /tmp/my_flow.mmd
 
 # Add edge labels
-python -m src /path/to/object --labels
+python -m src /path/to/object --edge-labels
 
 # Choose color scheme
 python -m src /path/to/object --scheme dark
 
 # Generate both overview and detailed versions
-python -m src /path/to/object --variant both --labels
+python -m src /path/to/object --variant both --edge-labels
 
 # Combine all options
-python -m src /path/to/object --variant both --scheme dark --png --labels
+python -m src /path/to/object --variant both --scheme dark --png --edge-labels
 
 # Use this one-liner to generate every variant (overview + detailed) in both color schemes (default + dark) with high-res PNGs:
-for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/output.mmd --variant both --png --png-scale 6 --scheme "$scheme" --labels --direction TD; done
+for scheme in default dark; do python -m src /path/to/object --out /path/to/folder/output.mmd --variant both --png --png-scale 6 --scheme "$scheme" --edge-labels --direction TD; done
 ```
  
 ## Detailed Usage
@@ -108,7 +108,7 @@ python -m src OBJECT_PATH [OPTIONS]
 - `--out PATH` - Output file path (default: flow.mmd)
 - `--variant CHOICE` - Diagram variant: detailed, overview, or both (default: detailed)
 - `--png` - Generate PNG output via mmdc
-- `--labels / --no-labels` - Show/hide edge labels (default: no-labels)
+- `--edge-labels / --no-edge-labels` - Show/hide edge labels (default: --edge-labels)
 - `--scheme CHOICE` - Color scheme: default or dark (default: default)
 - `--direction CHOICE` - Graph direction: TD, LR, or BT (default: TD)
 
@@ -132,8 +132,8 @@ python -m src OBJECT_PATH [OPTIONS]
 
 **Both Mode**:
 - Generates both variants with timestamped filenames:
-  - `{object_name}_flow_architecture_{scheme}_detailed_{MMDDYYYYHHMMSS}.mmd`
-  - `{object_name}_flow_architecture_{scheme}_overview_{MMDDYYYYHHMMSS}.mmd`
+  - `{object_name}_{MMDDYYYYHHMMSS}_flow_architecture_{scheme}_detailed.mmd`
+  - `{object_name}_{MMDDYYYYHHMMSS}_flow_architecture_{scheme}_overview.mmd`
 
 ### Color Schemes
 

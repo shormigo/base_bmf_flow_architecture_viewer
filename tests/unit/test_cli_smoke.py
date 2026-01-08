@@ -37,11 +37,11 @@ def test_cli_generates_mmd(tmp_path: Path, monkeypatch):
 
     out_path = tmp_path / "out.mmd"
     runner = CliRunner()
-    result = runner.invoke(main, [str(obj_dir), "--out", str(out_path), "--no-png", "--labels"]) 
+    result = runner.invoke(main, [str(obj_dir), "--out", str(out_path), "--no-png", "--edge-labels"]) 
     assert result.exit_code == 0
-    # New naming: {object_name}_flow_architecture_{scheme}_{variant}_{timestamp}.mmd
+    # New naming: {object_name}_{timestamp}_flow_architecture_{scheme}_{variant}.mmd
     # Check for generated file with pattern
-    generated_files = list(tmp_path.glob("dummy_flow_architecture_default_detailed_*.mmd"))
+    generated_files = list(tmp_path.glob("dummy_*_flow_architecture_default_detailed.mmd"))
     assert len(generated_files) == 1, f"Expected 1 file, found {len(generated_files)}: {generated_files}"
     actual_file = generated_files[0]
     content = actual_file.read_text(encoding="utf-8")

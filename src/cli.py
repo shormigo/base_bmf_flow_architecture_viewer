@@ -90,8 +90,8 @@ def main(object_path: str, out_path: str, variant: str, png: bool, png_scale: fl
         gen = MermaidGenerator(direction=direction, color_scheme=scheme, hide_utility_tasks=hide_util)
         code = gen.generate(result.graph, title=f"{obj_name} ({var_name})", label_edges=edge_labels, show_params=show_params)
 
-        # Generate filename: {object_name}_flow_architecture_{scheme}_{variant}_{timestamp}
-        filename = f"{obj_name}_flow_architecture_{scheme}_{var_name}_{timestamp}.mmd"
+        # Generate filename: {object_name}_{timestamp}_flow_architecture_{scheme}_{variant}
+        filename = f"{obj_name}_{timestamp}_flow_architecture_{scheme}_{var_name}.mmd"
         out_dir = Path(out_path).parent if Path(out_path).parent.name else Path(".")
         mmd_path = out_dir / filename
         _write_text(mmd_path, code)
