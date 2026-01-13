@@ -1,5 +1,6 @@
 # Task Type Definitions for BMF Flow Visualizer
-# This file defines all supported Prefect task types and their characteristics
+# This file aims to define all supported BMF task types and their characteristics
+# Needs to be updated with missing BMF tasks
 
 task_definitions:
   
@@ -165,6 +166,56 @@ task_definitions:
       - delimiter
       - columns_to_explode
     description: "Explode delimited column values into rows"
+  
+  RenameColumns:
+    display_name: "Rename Columns"
+    icon: "🏷️"
+    color: "#B3E5FC"  # Light Cyan
+    shape: "rect"
+    category: "processing"
+    parameters:
+      - input_table
+      - output_table
+      - rename_map
+    description: "Rename table columns"
+  
+  SortTable:
+    display_name: "Sort Table"
+    icon: "⬆️"
+    color: "#C8E6C9"  # Light Green
+    shape: "rect"
+    category: "processing"
+    parameters:
+      - input_table
+      - output_table
+      - sort_by
+      - ascending
+    description: "Sort table rows by specified columns"
+  
+  MeltTables:
+    display_name: "Melt Tables"
+    icon: "🔄"
+    color: "#FFE0B2"  # Light Orange
+    shape: "rect"
+    category: "processing"
+    parameters:
+      - input_table
+      - output_table
+      - id_vars
+      - value_vars
+    description: "Reshape table from wide to long format"
+  
+  SelectColumns:
+    display_name: "Select Columns"
+    icon: "✂️"
+    color: "#D1C4E9"  # Light Indigo
+    shape: "rect"
+    category: "processing"
+    parameters:
+      - input_table
+      - output_table
+      - columns
+    description: "Select specific columns from table"
   
   SetEnvironmentVariables:
     display_name: "Set Environment"
